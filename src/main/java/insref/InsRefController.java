@@ -25,7 +25,7 @@ public class InsRefController {
 		runProcess();
 	}
 
-	private static void runProcess() throws IOException {
+	public static void runProcess() throws IOException {
 		// run process and continuously retrieve user input.
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		String input = "";
@@ -60,7 +60,7 @@ public class InsRefController {
 		return returnCode;
 	}
 
-	private static void showRefInfo() {
+	public static void showRefInfo() {
 		// Show instruments info as a table.
 		String[] columnNames = instrumentsLme.get(0).keySet().toArray(new String[0]);
 		String[][] data = new String[instrumentsLme.size()][instrumentsLme.get(0).size()];
@@ -72,22 +72,22 @@ public class InsRefController {
 		textTable.printTable();
 	}
 
-	private static void applyRules() {
+	public static void applyRules() {
 		// Rules are applied here and can be added with further rules.
-		applyRulePublish();
-		applyRuleMapping();
+		instrumentsLme = applyRulePublish(instrumentsLme);
+		instrumentsLme = applyRuleMapping(instrumentsLme, instrumentsPrime);
 
 	}
 
-	private static void applyRuleMapping() {
+	public static List<HashMap<String, String>> applyRuleMapping(List<HashMap<String, String>> instrumentsLme, List<HashMap<String, String>> instrumentsPrime) {
 		// Map LME instruments with prime instruments
 		for (int i = 0; i < instrumentsLme.size(); i++) {
 			instrument = instrumentsLme.get(i);
 			// Mapping key is flexible via input field "MAPPING_KEY"
 			String mappingKeyLme = instrument.get(Concepts.MAPPING_KEY);
-			for (int j = 0; j < instrumentPrime.size(); j++) {
+			for (int j = 0; j < instrumentsPrime.size(); j++) {
 				// Start to scan prime instruments and link with lme instruments.
-				instrumentPrime = instruments.get(j);
+				instrumentPrime = instrumentsPrime.get(j);
 				String mappingKeyPrime = instrumentPrime.get(Concepts.MAPPING_KEY);
 				if (instrument.get(mappingKeyLme).equalsIgnoreCase(instrumentPrime.get(mappingKeyPrime))) {
 					// linked instruments with prime, now enriching tradable field.
@@ -98,10 +98,11 @@ public class InsRefController {
 			}
 			instrumentsLme.set(i, instrument);
 		}
+		return instrumentsLme;
 
 	}
 
-	private static void applyRulePublish() {
+	public static List<HashMap<String, String>> applyRulePublish(List<HashMap<String, String>> instruments) {
 		// If a LME instrument is published, the tradable flag should be set as true.
 		for (int i = 0; i < instruments.size(); i++) {
 			instrument = instruments.get(i);
@@ -110,10 +111,10 @@ public class InsRefController {
 			}
 			instruments.set(i, instrument);
 		}
-
+		return instruments;
 	}
 
-	private static void getInsInfo() {
+	public static void getInsInfo() {
 		// get instruments info from input file.
 		clearIns();
 		FileProcessUtil fp = new FileProcessUtil();
@@ -134,7 +135,7 @@ public class InsRefController {
 
 	}
 
-	private static void clearIns() {
+	public static void clearIns() {
 		// clear out current instruments before loading.
 		instruments.clear();
 		instrumentPrime.clear();

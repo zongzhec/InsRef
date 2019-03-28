@@ -7,6 +7,8 @@ public class Concepts {
 	public static final String MAPPING_KEY = "mapping_key";
 	public static final String PUBLISH = "publish";
 	public static final String TRADABLE = "tradable";
+	public static final String LME_CODE = "lme_code";
+	public static final String EXCH_CODE = "exch_code";
 
 	// Values
 	public static final String LME = "lme";
